@@ -125,6 +125,21 @@ async function payMpesa() {
   </div>
 </section>
 
+  <section id="payment" class="payment-section">
+  <div class="payment-card">
+    <h2>Pay with M-Pesa</h2>
+    <p>Enter your phone number to receive STK push</p>
+
+    <input type="text" id="mpesa-phone" placeholder="2547XXXXXXXX">
+    <input type="number" id="mpesa-amount" placeholder="Amount">
+
+    <button onclick="payMpesa()">Pay Now</button>
+
+    <p id="mpesa-response"></p>
+  </div>
+</section>
+
+
 <script>
 async function pay() {
   const phone = document.getElementById("phone").value;
@@ -144,4 +159,5 @@ async function pay() {
 
 </body>
 </html>
+
 
