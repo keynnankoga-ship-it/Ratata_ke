@@ -1,163 +1,346 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Ratata</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
+<meta charset="UTF-8">
+<title>Ratata Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script>
-async function payMpesa() {
-  const phone = document.getElementById("mpesa-phone").value.trim();
-  const amount = document.getElementById("mpesa-amount").value.trim();
-  const responseEl = document.getElementById("mpesa-response");
-
-  responseEl.innerText = "Processing payment...";
-
-  try {
-    const res = await fetch("http://localhost:5000/stkpush", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ phone, amount })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      const err = typeof data.error === "object"
-        ? JSON.stringify(data.error)
-        : data.error;
-      responseEl.innerText = "Error: " + err;
-    } else {
-      responseEl.innerText = "STK Push sent to your phone ✔";
-    }
-
-  } catch (err) {
-    responseEl.innerText = "Network error: " + err.message;
-  }
+<style>
+body{
+  margin:0;
+  background:#0a0a0a;
+  color:white;
+  font-family:Georgia,serif;
 }
-</script>
+h1,h2,h3{margin:0 0 15px}
 
-    body {
-      margin: 0;
-      background: #0a0a0a;
-      color: white;
-      font-family: Georgia, serif;
-    }
+/* HERO */
+.hero{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:80px;
+  min-height:80vh;
+}
+.left{max-width:50%}
+h1{font-size:60px}
+.btn{
+  background:#ff7a2f;
+  padding:12px 25px;
+  border:none;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  border-radius:6px;
+}
+img{max-width:100%}
 
-    .hero {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 80px;
-      min-height: 100vh;
-    }
+/* PRODUCTS */
+.products{
+  padding:80px 8%;
+  background:#111;
+  text-align:center;
+}
+.product-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:30px;
+  margin-top:40px;
+}
+.card{
+  background:#1a1a1a;
+  padding:20px;
+  border-radius:12px;
+}
+.card img{
+  border-radius:10px;
+  margin-bottom:10px;
+}
+.price{
+  color:#ff7a2f;
+  font-weight:bold;
+  margin:10px 0;
+}
 
-    .left {
-      max-width: 50%;
-    }
+/* CART */
+.cart{
+  padding:80px 8%;
+}
+.cart-item{
+  display:flex;
+  justify-content:space-between;
+  margin:10px 0;
+}
+.total{
+  font-size:22px;
+  margin-top:20px;
+  color:#ff7a2f;
+}
 
-    h1 {
-      font-size: 60px;
-      line-height: 1.2;
-    }
+/* DELIVERY */
+.section-dark{
+  padding:80px 20px;
+  background:#111;
+  text-align:center;
+}
+form{
+  max-width:500px;
+  margin:auto;
+}
+form input,form textarea{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border:none;
+  border-radius:6px;
+}
 
-    .btn {
-      background: #ff7a2f;
-      padding: 15px 30px;
-      border: none;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 20px;
-    }
+/* PAYMENT */
+.payment-section{
+  padding:80px 20px;
+  background:#0a0a0a;
+  text-align:center;
+}
+.payment-card{
+  max-width:400px;
+  margin:auto;
+  background:#111;
+  padding:40px;
+  border-radius:12px;
+}
+.payment-card input{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border:none;
+  border-radius:6px;
+}
+#mpesa-response{
+  margin-top:10px;
+  color:#ff7a2f;
+}
 
-    .payment-box {
-      margin-top: 40px;
-      background: #1a1a1a;
-      padding: 30px;
-      border-radius: 10px;
-    }
+/* GALLERY */
+.gallery{
+  padding:80px 8%;
+  text-align:center;
+}
+.gallery-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:20px;
+  margin-top:30px;
+}
+.gallery img, .gallery video{
+  width:100%;
+  border-radius:12px;
+}
 
-    input {
-      padding: 12px;
-      width: 100%;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: none;
-    }
+/* CONTACT */
+.contact{
+  padding:80px 20px;
+  background:#111;
+  text-align:center;
+}
 
-    img {
-      max-width: 450px;
-    }
-
-    @media(max-width: 900px){
-      .hero{
-        flex-direction: column;
-        text-align: center;
-      }
-      .left{
-        max-width: 100%;
-      }
-    }
-  </style>
+@media(max-width:900px){
+  .hero{flex-direction:column;text-align:center}
+  .left{max-width:100%}
+}
+</style>
 </head>
+
 <body>
 
+<!-- HERO -->
 <section class="hero">
   <div class="left">
     <h1>Experience the<br>Power of Ratata</h1>
-    <p>Premium product events & exclusive access</p>
-
-    <div class="payment-box">
-      <h3>Pay via M-Pesa</h3>
-      <input type="text" id="phone" placeholder="Phone (2547XXXXXXXX)">
-      <input type="number" id="amount" placeholder="Amount">
-      <button class="btn" onclick="pay()">Pay Now</button>
-      <p id="response"></p>
-    </div>
+    <p>Premium meals & exclusive taste</p>
+    <button class="btn" onclick="scrollToProducts()">Shop Now</button>
   </div>
-
-  <div class="right">
-    <img src="pasta.png">
+  <div>
+    <img src="images/pasta.jpg">
   </div>
 </section>
 
-  <section id="payment" class="payment-section">
+<!-- PRODUCTS -->
+<section id="products" class="products">
+  <h2>Our Menu</h2>
+  <div class="product-grid">
+
+    <div class="card">
+      <img src="images/pasta.jpg">
+      <h3>Pasta Deluxe</h3>
+      <div class="price">KSh 800</div>
+      <button class="btn" onclick="addToCart('Pasta Deluxe',800)">Add to Cart</button>
+    </div>
+
+    <div class="card">
+      <img src="images/pizza.jpg">
+      <h3>Ratata Pizza</h3>
+      <div class="price">KSh 1200</div>
+      <button class="btn" onclick="addToCart('Ratata Pizza',1200)">Add to Cart</button>
+    </div>
+
+    <div class="card">
+      <img src="images/dessert.jpg">
+      <h3>Chocolate Bliss</h3>
+      <div class="price">KSh 600</div>
+      <button class="btn" onclick="addToCart('Chocolate Bliss',600)">Add to Cart</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- CART -->
+<section class="cart">
+  <h2>Your Cart</h2>
+  <div id="cart-items"></div>
+  <div class="total">Total: KSh <span id="cart-total">0</span></div>
+
+  <br>
+  <button class="btn" onclick="scrollToDelivery()">Checkout</button>
+  <br><br>
+
+  <a id="whatsapp-link" target="_blank">
+    <button class="btn">Order via WhatsApp</button>
+  </a>
+</section>
+
+<!-- DELIVERY -->
+<section id="delivery" class="section-dark">
+  <h2>Delivery Details</h2>
+  <form id="delivery-form">
+    <input type="text" id="cust-name" placeholder="Full Name" required>
+    <input type="email" id="cust-email" placeholder="Email" required>
+    <input type="text" id="cust-phone" placeholder="Phone 2547XXXXXXXX" required>
+    <textarea id="cust-address" placeholder="Delivery Address" required></textarea>
+  </form>
+</section>
+
+<!-- MPESA -->
+<section id="payment" class="payment-section">
   <div class="payment-card">
-    <h2>Pay with M-Pesa</h2>
-    <p>Enter your phone number to receive STK push</p>
+    <h2>M-Pesa Checkout</h2>
+    <p>Enter phone to pay</p>
 
     <input type="text" id="mpesa-phone" placeholder="2547XXXXXXXX">
-    <input type="number" id="mpesa-amount" placeholder="Amount">
-
-    <button onclick="payMpesa()">Pay Now</button>
-
+    <button class="btn" onclick="payMpesa()">Pay Now</button>
     <p id="mpesa-response"></p>
   </div>
 </section>
 
+<!-- GALLERY -->
+<section class="gallery">
+  <h2>Gallery</h2>
+  <div class="gallery-grid">
+    <img src="images/pasta.jpg">
+    <img src="images/pizza.jpg">
+    <img src="images/dessert.jpg">
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact">
+  <h2>Contact</h2>
+  <form action="https://formspree.io/f/FORM_ID" method="POST">
+    <input type="text" name="name" placeholder="Name">
+    <input type="email" name="email" placeholder="Email">
+    <textarea name="message" placeholder="Message"></textarea>
+    <button class="btn">Send</button>
+  </form>
+</section>
 
 <script>
-async function pay() {
-  const phone = document.getElementById("phone").value;
-  const amount = document.getElementById("amount").value;
+let cart=[];
+let total=0;
 
-  const res = await fetch("http://localhost:5000/stkpush", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ phone, amount })
+function scrollToProducts(){
+  document.getElementById("products").scrollIntoView({behavior:"smooth"});
+}
+function scrollToDelivery(){
+  document.getElementById("delivery").scrollIntoView({behavior:"smooth"});
+}
+
+function addToCart(name,price){
+  cart.push({name,price});
+  total+=price;
+  updateCart();
+}
+
+function updateCart(){
+  const cartDiv=document.getElementById("cart-items");
+  cartDiv.innerHTML="";
+
+  cart.forEach(item=>{
+    const div=document.createElement("div");
+    div.className="cart-item";
+    div.innerHTML=`<span>${item.name}</span><span>KSh ${item.price}</span>`;
+    cartDiv.appendChild(div);
   });
 
-  const data = await res.json();
-  document.getElementById("response").innerText =
-    "Check your phone to complete payment.";
+  document.getElementById("cart-total").innerText=total;
+
+  let msg="Hello Ratata, I want to order:%0A";
+  cart.forEach(i=>msg+=`${i.name} - KSh ${i.price}%0A`);
+  msg+=`Total: KSh ${total}`;
+
+  document.getElementById("whatsapp-link").href=
+    "https://wa.me/2547XXXXXXXX?text="+msg;
+}
+
+async function payMpesa(){
+  const phone=document.getElementById("mpesa-phone").value.trim();
+  const name=document.getElementById("cust-name").value;
+  const email=document.getElementById("cust-email").value;
+  const address=document.getElementById("cust-address").value;
+  const response=document.getElementById("mpesa-response");
+
+  if(!phone||total<=0||!name||!email||!address){
+    response.innerText="Fill delivery & cart";
+    return;
+  }
+
+  response.innerText="Processing payment...";
+
+  try{
+    const mpesaRes=await fetch("http://localhost:5000/stkpush",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({phone,amount:total})
+    });
+
+    const mpesaData=await mpesaRes.json();
+
+    if(!mpesaRes.ok){
+      response.innerText="MPesa error";
+      return;
+    }
+
+    await fetch("http://localhost:5000/order",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        name,
+        email,
+        phone,
+        address,
+        total,
+        items:cart
+      })
+    });
+
+    response.innerText="Payment sent ✔ Receipt emailed";
+
+  }catch(err){
+    response.innerText="Network error";
+  }
 }
 </script>
 
 </body>
 </html>
+
 
 
