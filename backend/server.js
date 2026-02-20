@@ -9,6 +9,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+/* SERVE FRONTEND */
+app.use(express.static("public"));
+
 /* =========================
    ENV VARIABLES
 ========================= */
@@ -168,9 +171,12 @@ async function sendReceipt(order) {
   });
 }
 
-/* =========================
-   SERVER
-========================= */
+/* ROOT ROUTE */
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/index.html");
+});
+
+/* SERVER */
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
   console.log("Ratata server running on port " + PORT)
