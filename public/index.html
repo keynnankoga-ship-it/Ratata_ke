@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Ratata</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 80px;
+      background: #f4f6f8;
+    }
+    h1 { color: #0a7cff; }
+    button {
+      padding: 10px 18px;
+      border: none;
+      background: #0a7cff;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to Ratata 🚀</h1>
+  <p>Your fullstack app is live on Render.</p>
+
+  <button onclick="testAPI()">Test Backend API</button>
+
+  <p id="result"></p>
+
+  <script>
+    async function testAPI() {
+      const res = await fetch("/api/hello");
+      const data = await res.json();
+      document.getElementById("result").innerText = data.message;
+    }
+  </script>
+</body>
+</html>
