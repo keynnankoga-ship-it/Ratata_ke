@@ -11,9 +11,10 @@ app.use(express.json());
 app.use(cors());
 
 /* =========================
-   FRONTEND
+   FRONTEND STATIC FILES
 ========================= */
-app.use(express.static(path.join(__dirname, "public")));
+const publicPath = path.join(__dirname, "public");
+app.use(express.static(publicPath));
 
 /* =========================
    ENV VARIABLES
@@ -39,12 +40,10 @@ if (!fs.existsSync(ORDERS_FILE)) fs.writeFileSync(ORDERS_FILE, "[]");
 ========================= */
 async function getAccessToken() {
   const auth = Buffer.from(`${CONSUMER_KEY}:${CONSUMER_SECRET}`).toString("base64");
-
   const res = await axios.get(
     "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials",
     { headers: { Authorization: `Basic ${auth}` } }
   );
-
   return res.data.access_token;
 }
 
@@ -52,13 +51,13 @@ async function getAccessToken() {
    API ROUTES
 ========================= */
 
-// Test backend API
+// Test API
 app.get("/api/hello", (req, res) => {
   res.json({ message: "API working 🚀" });
 });
 
 // STK Push
-app.post("/stkpush", async (req, res) => {
+app.post("/api/stkpush", async (req, res) => {
   const { phone, amount } = req.body;
   if (!phone || !amount) return res.status(400).json({ error: "Phone & amount required" });
 
@@ -94,20 +93,21 @@ app.post("/stkpush", async (req, res) => {
 });
 
 // Save order
-app.post("/order", async (req, res) => {
+app.post("/api/order", async (req, res) => {
   try {
     const order = req.body;
     const orders = JSON.parse(fs.readFileSync(ORDERS_FILE));
 
     order.id = Date.now();
     order.date = new Date().toISOString();
-
     orders.push(order);
     fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2));
 
-    await sendReceipt(order);
-    res.json({ success: true, orderId: order.id });
+    if (EMAIL_USER && EMAIL_PASS) {
+      await sendReceipt(order);
+    }
 
+    res.json({ success: true, orderId: order.id });
   } catch (err) {
     console.log("ORDER ERROR:", err);
     res.status(500).json({ error: "Order save failed" });
@@ -115,7 +115,7 @@ app.post("/order", async (req, res) => {
 });
 
 // Get all orders
-app.get("/orders", (req, res) => {
+app.get("/api/orders", (req, res) => {
   const orders = JSON.parse(fs.readFileSync(ORDERS_FILE));
   res.json(orders);
 });
@@ -124,15 +124,13 @@ app.get("/orders", (req, res) => {
    EMAIL RECEIPT
 ========================= */
 async function sendReceipt(order) {
-  if (!EMAIL_USER || !EMAIL_PASS) return;
-
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: { user: EMAIL_USER, pass: EMAIL_PASS }
   });
 
   let itemsText = "";
-  order.items.forEach(i => itemsText += `${i.name} - KSh ${i.price}\n`);
+  order.items.forEach(i => (itemsText += `${i.name} - KSh ${i.price}\n`));
 
   await transporter.sendMail({
     from: EMAIL_USER,
@@ -146,11 +144,11 @@ async function sendReceipt(order) {
    CATCH-ALL FRONTEND ROUTE
 ========================= */
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(publicPath, "index.html"));
 });
 
 /* =========================
-   SERVER
+   SERVER START
 ========================= */
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Ratata server running on port ${PORT}`));
