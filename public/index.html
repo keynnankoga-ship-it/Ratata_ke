@@ -230,7 +230,7 @@ footer{
 
   <ul>
     <li><a onclick="scrollToHome()">Home</a></li>
-    <li><a onclick="scrollToAboutUs()">About Us</a><li>
+    <li><a onclick="scrollToAbout()">About Us</a><li>
     <li><a onclick="scrollToProducts()">Menu</a></li>
     <li><a onclick="scrollToContact()">Contact</a></li>
     <li><a onclick="openCart()">Cart</a></li>
@@ -414,18 +414,35 @@ So raise a glass, share a laugh, and remember: good things come to those who fer
     <a href="tel:+254799361767">
       <img src="images/phone-icon.png" alt="Phone" height="30">
     </a>
-      <a href="https://instagram.com/ratata.ke" target="_blank" style="color:#ff7a2f; text-decoration:none; font-weight:bold;">
-        Instagram @ratata.ke
-      </a>
+      <a <div class="social-links">
+  
+  <!-- WhatsApp -->
+  <a href="https://wa.me/254799361767" target="_blank">
+    <img src="images/whatsapp-icon.png" alt="WhatsApp">
+  </a>
 
-      <a href="https://twitter.com/ratata_ke" target="_blank" style="color:#ff7a2f; text-decoration:none; font-weight:bold;">
-        Twitter @ratata_ke
-      </a>
+  <!-- Phone -->
+  <a href="tel:+254799361767">
+    <img src="images/phone-icon.png" alt="Phone">
+  </a>
 
-      <a href="mailto:keynnankoga@gmail.com" style="color:#ff7a2f; text-decoration:none; font-weight:bold;">
-        Email keynnankoga@gmail.com
-      </a>
-    </div>
+  <!-- Instagram -->
+  <a href="https://instagram.com/ratata.ke" target="_blank">
+    <img src="images/instagram-icon.png" alt="Instagram">
+  </a>
+
+  <!-- Twitter / X -->
+  <a href="https://twitter.com/ratata_ke" target="_blank">
+    <img src="images/twitter-icon.png" alt="Twitter">
+  </a>
+
+  <!-- Email -->
+  <a href="mailto:keynnankoga@gmail.com">
+    <img src="images/email-icon.png" alt="Email">
+  </a>
+</div>
+</div>
+
   </div>
 </section>  
 
@@ -437,6 +454,7 @@ So raise a glass, share a laugh, and remember: good things come to those who fer
 <script>
 // NAVIGATION
 function scrollToHome(){document.getElementById("home").scrollIntoView({behavior:"smooth"})}
+function scrollToAboutUs(){document.getElementById("about").scrollIntoView({behavior: "smooth"})}
 function scrollToProducts(){document.getElementById("products").scrollIntoView({behavior:"smooth"})}
 function scrollToContact(){document.getElementById("contact").scrollIntoView({behavior:"smooth"})}
 
