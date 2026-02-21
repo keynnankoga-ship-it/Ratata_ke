@@ -30,15 +30,57 @@ app.post("/create-payment-intent", async (req, res) => {
 });
 
 // ===== M-PESA STK PUSH =====
-// Example simulation; replace with Safaricom API for live payments
+const axios = require("axios");
+
+// Generate MPESA Token
+async function getMpesaToken() {
+  const auth = Buffer.from(
+    process.env.MPESA_CONSUMER_KEY + ":" + process.env.MPESA_CONSUMER_SECRET
+  ).toString("base64");
+
+  const response = await axios.get(
+    "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials",
+    { headers: { Authorization: `Basic ${auth}` } }
+  );
+
+  return response.data.access_token;
+}
+
 app.post("/stkpush", async (req, res) => {
   const { phone, amount } = req.body;
 
-  console.log(`STK Push initiated for phone ${phone}, amount KSh ${amount}`);
+  try {
+    const token = await getMpesaToken();
 
-  // Here you would call Safaricom API for live payment
-  // For now, we simulate success
-  res.json({ message: "M-Pesa payment initiated" });
+    const timestamp = new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 14);
+    const password = Buffer.from(
+      process.env.MPESA_SHORTCODE + process.env.MPESA_PASSKEY + timestamp
+    ).toString("base64");
+
+    const response = await axios.post(
+      "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
+      {
+        BusinessShortCode: process.env.MPESA_SHORTCODE,
+        Password: password,
+        Timestamp: timestamp,
+        TransactionType: "CustomerPayBillOnline",
+        Amount: amount,
+        PartyA: phone,
+        PartyB: process.env.MPESA_SHORTCODE,
+        PhoneNumber: phone,
+        CallBackURL: process.env.MPESA_CALLBACK_URL,
+        AccountReference: "Ratata",
+        TransactionDesc: "Payment",
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    console.log("MPESA RESPONSE:", response.data);
+    res.json(response.data);
+  } catch (err) {
+    console.error("MPESA ERROR:", err.response?.data || err.message);
+    res.status(500).json({ error: "STK Push failed" });
+  }
 });
 
 // ===== ORDER LOGGING =====
