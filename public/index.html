@@ -311,11 +311,11 @@ footer{
 <!-- CONTACT -->
 <section id="contact" class="contact">
   <h2>Contact</h2>
-  <form>
-    <input type="text" placeholder="Name" required>
-    <input type="email" placeholder="Email" required>
-    <textarea placeholder="Message"></textarea>
-    <button class="btn" onclick="sendEmail(event)">Send Email</button>
+  <form action="https://formspree.io/f/mzdardwe" method="POST">
+    <input type="text" name="name" placeholder="Name" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <textarea name="message" placeholder="Message" required></textarea>
+    <button class="btn" type="submit">Send Message</button>
   </form>
   <div style="margin-top:20px;">
     <a href="https://facebook.com" target="_blank">Facebook</a>
@@ -323,7 +323,6 @@ footer{
     <a href="https://twitter.com" target="_blank">Twitter</a>
   </div>
 </section>
-
 <!-- FOOTER -->
 <footer>
   &copy; 2026 Ratata Store. All rights reserved.
