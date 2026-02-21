@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Ratata Store</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 /* === GLOBAL === */
 body{
@@ -216,6 +217,7 @@ footer{
   nav ul li{margin:10px 0}
 }
 </style>
+
 <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
@@ -265,6 +267,43 @@ footer{
       <div class="price">KSh 3000</div>
       <button class="btn" onclick="addToCart('Ratata Original 5Litres',3000)">Add to Cart</button>
     </div>
+  <div class="card">
+      <img src="images/pizza.jpg">
+      <h3>Ratata Pineapple-Ginger 1Ltr</h3>
+      <div class="price">KSh 800</div>
+      <button class="btn" onclick="addToCart('Ratata Pineapple-Ginger 1Ltr',800)">Add to Cart</button>
+    </div>
+<div class="card">
+      <img src="images/pizza.jpg">
+      <h3>Ratata Pineapple-Ginger 2Ltrs</h3>
+      <div class="price">KSh 1450</div>
+      <button class="btn" onclick="addToCart('Ratata Pineapple-Ginger 2Ltrs',1450)">Add to Cart</button>
+    </div>
+<div class="card">
+      <img src="images/pizza.jpg">
+      <h3>Ratata Pineapple-Ginger 5Ltrs</h3>
+      <div class="price">KSh 3200</div>
+      <button class="btn" onclick="addToCart('Ratata Pineapple-Ginger 5Ltrs',3200)">Add to Cart</button>
+    </div>
+<div class="card">
+      <img src="images/pizza.jpg">
+      <h3>Ratata T-Shirt(White)</h3>
+      <div class="price">KSh 1000</div>
+      <button class="btn" onclick="addToCart('Ratata T-Shirt(White)',1000)">Add to Cart</button>
+    </div>
+<div class="card">
+      <img src="images/pizza.jpg">
+      <h3>Ratata T-Shirt(Black)</h3>
+      <div class="price">KSh 1000</div>
+      <button class="btn" onclick="addToCart('Ratata T-Shirt(Black)',1000)">Add to Cart</button>
+    </div>
+<div class="card">
+      <img src="images/pizza.jpg">
+      <h3>Ratata T-Shirt(Pink)</h3>
+      <div class="price">KSh 1000</div>
+      <button class="btn" onclick="addToCart('Ratata T-Shirt(Pink)',1000)">Add to Cart</button>
+    </div>
+
   </div>
 </section>
 
@@ -317,28 +356,42 @@ footer{
     <textarea name="message" placeholder="Message" required></textarea>
     <button class="btn" type="submit">Send Message</button>
   </form>
-  <div style="margin-top:20px;">
-    <a href="https://facebook.com" target="_blank">Facebook</a>
-    <a href="https://instagram.com" target="_blank">Instagram</a>
-    <a href="https://twitter.com" target="_blank">Twitter</a>
+   <!-- Social Links -->
+  <div class="social-section">
+    <h3>Or find us here</h3>
+
+    <div class="social-links">
+      <a href="https://instagram.com/ratata.ke" target="_blank">
+        <i class="fab fa-instagram"></i> @ratata.ke
+      </a>
+
+      <a href="https://twitter.com/ratata_ke" target="_blank">
+        <i class="fab fa-x-twitter"></i> @ratata_ke
+      </a>
+
+      <a href="mailto:keynnankoga@gmail.com">
+        <i class="fas fa-envelope"></i> keynnankoga@gmail.com
+      </a>
+    </div>
   </div>
+
 </section>
+
 <!-- FOOTER -->
 <footer>
-  &copy; 2026 Ratata Store. All rights reserved.
+  &copy; 2026 ©KoyoXRatata Store|All rights reserved.
 </footer>
 
 <script>
-// CART
-let cart=[]; 
-let total=0;
-
 // NAVIGATION
 function scrollToHome(){document.getElementById("home").scrollIntoView({behavior:"smooth"})}
 function scrollToProducts(){document.getElementById("products").scrollIntoView({behavior:"smooth"})}
 function scrollToContact(){document.getElementById("contact").scrollIntoView({behavior:"smooth"})}
 
-// CART FUNCTIONS
+// CART
+let cart=[];
+let total=0;
+
 function addToCart(name,price){
   let existing=cart.find(i=>i.name===name);
   if(existing){ existing.qty++; existing.priceTotal=existing.qty*price; }
@@ -370,10 +423,7 @@ function changeQty(index,val){
 }
 function openCart(){ document.getElementById("cart-modal").style.display="flex"; }
 function closeCart(){ document.getElementById("cart-modal").style.display="none"; }
-function openPayment(){ 
-  document.getElementById("payment-modal").style.display="flex"; 
-  closeCart();
-}
+function openPayment(){ document.getElementById("payment-modal").style.display="flex"; closeCart(); }
 function closePayment(){ document.getElementById("payment-modal").style.display="none"; }
 
 // M-PESA PAYMENT
@@ -383,21 +433,16 @@ async function payMpesa(){
   if(!phone||total<=0){ response.innerText="Cart empty or phone missing"; return; }
   response.innerText="Processing M-Pesa payment...";
   try{
-    const res=await fetch("http://localhost:5000/stkpush",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({phone,amount:total})
-    });
+    const res=await fetch("/stkpush",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({phone,amount:total})});
     const data=await res.json();
     response.innerText="M-Pesa payment initiated ✔";
-    cart=[];
-    total=0;
+    cart=[]; total=0;
     closePayment();
   }catch(err){ response.innerText="Network error"; }
 }
 
 // STRIPE CARD PAYMENT
-const stripe = Stripe("pk_test_YOUR_TEST_KEY"); // Replace with your Stripe test publishable key
+const stripe = Stripe("pk_test_YOUR_STRIPE_PUBLISHABLE_KEY"); // Replace with your key
 const elements = stripe.elements();
 const cardElement = elements.create("card");
 cardElement.mount("#card-element");
@@ -406,33 +451,13 @@ document.getElementById("card-button").addEventListener("click", async ()=>{
   if(total<=0){ document.getElementById("payment-response").innerText="Cart is empty"; return; }
   document.getElementById("payment-response").innerText="Processing card payment...";
   try{
-    const res=await fetch("http://localhost:5000/create-payment-intent",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({amount:total})
-    });
+    const res=await fetch("/create-payment-intent",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({amount:total})});
     const data=await res.json();
-    const {error, paymentIntent} = await stripe.confirmCardPayment(data.clientSecret,{
-      payment_method:{card:cardElement}
-    });
+    const {error, paymentIntent} = await stripe.confirmCardPayment(data.clientSecret,{payment_method:{card:cardElement}});
     if(error) document.getElementById("payment-response").innerText="Card error: "+error.message;
-    else if(paymentIntent.status==="succeeded"){
-      document.getElementById("payment-response").innerText="Card payment successful ✔";
-      cart=[];
-      total=0;
-      closePayment();
-    }
+    else if(paymentIntent.status==="succeeded"){ document.getElementById("payment-response").innerText="Card payment successful ✔"; cart=[]; total=0; closePayment(); }
   }catch(err){ document.getElementById("payment-response").innerText="Network error"; }
 });
-
-// CONTACT EMAIL
-function sendEmail(e){
-  e.preventDefault();
-  const name=document.querySelector(".contact input[type=text]").value;
-  const email=document.querySelector(".contact input[type=email]").value;
-  const message=document.querySelector(".contact textarea").value;
-  window.location.href=`mailto:youremail@example.com?subject=Message from ${name}&body=${message}%0AFrom: ${email}`;
-}
 </script>
 </body>
 </html>
